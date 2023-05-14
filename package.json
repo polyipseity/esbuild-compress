@@ -1,0 +1,27 @@
+{
+  "author": "polyipseity",
+  "bugs": {
+    "url": "https://github.com/polyipseity/esbuild-compress/issues"
+  },
+  "description": "Compression plugin for esbuild.",
+  "homepage": "https://github.com/polyipseity/esbuild-compress#readme",
+  "keywords": [
+    "compress",
+    "compression",
+    "esbuild",
+    "esbuild-plugin",
+    "plugin"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "esbuild-compress",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/polyipseity/esbuild-compress.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "version": "1.0.0"
+}
