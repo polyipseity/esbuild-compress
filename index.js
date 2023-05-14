@@ -1,14 +1,19 @@
 import lzString from "lz-string"
 
 /**
- * Creates compression plugin.
+ * @typedef {object} Options
+ * @property {boolean=} lazy whether decompression is lazy
+ */
+
+/**
+ * Creates a compression plugin.
  * 
  * Lazy decompression returns a {@link PromiseLike}.
  * 
- * @param {boolean=false} lazy whether decompression is lazy
- * @returns {import("esbuild").Plugin} a esbuild plugin
+ * @param {Options} options plugin options
+ * @returns {import("esbuild").Plugin} an esbuild plugin
  */
-export default function esbuildCompress(lazy = false) {
+export default function esbuildCompress(options = {}) {
 	return {
 		name: "compress",
 		setup(build) {
@@ -25,7 +30,7 @@ export default function esbuildCompress(lazy = false) {
 					build.onLoad({ filter: filter() }, async ({ path }) => {
 						const data = await readFile(path, { encoding: "utf-8" })
 						return {
-							contents: lazy ? `
+							contents: options.lazy ? `
 import PLazy from "p-lazy"
 import { decompressFromBase64 as decompress } from "lz-string"
 export default PLazy.from(() =>
