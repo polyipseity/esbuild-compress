@@ -4,6 +4,16 @@
     "url": "https://github.com/polyipseity/esbuild-compress/issues"
   },
   "description": "Compression plugin for esbuild.",
+  "funding": [
+    {
+      "type": "Buy Me a Coffee",
+      "url": "https://buymeacoffee.com/polyipseity"
+    },
+    {
+      "type": "GitHub Sponsors",
+      "url": "https://github.com/sponsors/polyipseity"
+    }
+  ],
   "homepage": "https://github.com/polyipseity/esbuild-compress#readme",
   "keywords": [
     "compress",
