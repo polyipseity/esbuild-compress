@@ -3,7 +3,16 @@
   "bugs": {
     "url": "https://github.com/polyipseity/esbuild-compress/issues"
   },
+  "dependencies": {
+    "esbuild": "^0.17.19",
+    "lodash-es": "^4.17.21",
+    "lz-string": "^1.5.0",
+    "p-lazy": "^4.0.0"
+  },
   "description": "Compression plugin for esbuild.",
+  "devDependencies": {
+    "@types/node": "^20.1.4"
+  },
   "funding": [
     {
       "type": "Buy Me a Coffee",
@@ -33,12 +42,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
-  "version": "1.1.1",
-  "dependencies": {
-    "esbuild": "^0.17.19",
-    "lodash-es": "^4.17.21",
-    "lz-string": "^1.5.0",
-    "node": "^20.1.0",
-    "p-lazy": "^4.0.0"
-  }
+  "version": "1.1.1"
 }
