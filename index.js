@@ -1,4 +1,6 @@
+import { escapeRegExp } from "lodash-es"
 import lzString from "lz-string"
+import { readFile } from "fs/promises"
 
 /**
  * @typedef {object} Options
