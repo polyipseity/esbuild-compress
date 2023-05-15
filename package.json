@@ -4,6 +4,7 @@
     "url": "https://github.com/polyipseity/esbuild-compress/issues"
   },
   "dependencies": {
+    "import-meta-resolve": "^3.0.0",
     "lodash-es": "^4.17.21",
     "lz-string": "^1.5.0",
     "p-lazy": "^4.0.0"

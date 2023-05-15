@@ -1,6 +1,8 @@
 import { escapeRegExp } from "lodash-es"
+import { fileURLToPath } from "node:url"
 import lzString from "lz-string"
-import { readFile } from "fs/promises"
+import { readFile } from "node:fs/promises"
+import { resolve } from "import-meta-resolve"
 
 const { compressToBase64 } = lzString
 
@@ -18,11 +20,30 @@ const { compressToBase64 } = lzString
  * @returns {import("esbuild").Plugin} an esbuild plugin
  */
 export default function esbuildCompress(options = {}) {
-	const { lazy } = options
+	const
+		name = "compress",
+		{ lazy } = options
 	return {
-		name: "compress",
-		setup({ initialOptions: { loader } }) {
-			const loaders = loader ?? {}
+		name,
+		setup(build) {
+			const
+				{ initialOptions: { loader } } = build,
+				loaders = loader ?? {}
+
+			build.onResolve({
+				filter: new RegExp(`^${escapeRegExp(name)}:`, "u"),
+			}, ({ path }) => ({
+				namespace: name,
+				path: path.slice(`${name}:`.length),
+			}))
+			build.onLoad({ filter: /.*/u, namespace: name }, async ({ path }) => ({
+				contents: await readFile(
+					fileURLToPath(resolve(path, import.meta.url)),
+					{ encoding: "utf-8" },
+				),
+				loader: "js",
+			}))
+
 			for (const [ext, loader] of Object.entries(loaders)) {
 				const filter = new RegExp(`${escapeRegExp(ext)}$`, "u")
 				if (loader === "compressed-text") {
@@ -30,12 +51,12 @@ export default function esbuildCompress(options = {}) {
 						const data = await readFile(path, { encoding: "utf-8" })
 						return {
 							contents: lazy ? `
-import PLazy from "p-lazy"
-import { decompressFromBase64 as decompress } from "lz-string"
+import PLazy from "${name}:p-lazy"
+import { decompressFromBase64 as decompress } from "${name}:lz-string"
 export default PLazy.from(() =>
 	decompress(${jsString(compressToBase64(data))}))
 ` : `
-import { decompressFromBase64 as decompress } from "lz-string"
+import { decompressFromBase64 as decompress } from "${name}:lz-string"
 export default decompress(${jsString(compressToBase64(data))})
 `,
 							loader: "js",
@@ -47,7 +68,7 @@ export default decompress(${jsString(compressToBase64(data))})
 						JSON.parse(data)
 						return {
 							contents: `
-import { decompressFromBase64 as decompress } from "lz-string"
+import { decompressFromBase64 as decompress } from "${name}:lz-string"
 export default JSON.parse(decompress(${jsString(compressToBase64(data))}))
 `,
 							loader: "js",
