@@ -34,14 +34,10 @@ export default function esbuildCompress(options = {}) {
 				filter: new RegExp(`^${escapeRegExp(name)}:`, "u"),
 			}, ({ path }) => ({
 				namespace: name,
-				path: path.slice(`${name}:`.length),
-			}))
-			build.onLoad({ filter: /.*/u, namespace: name }, async ({ path }) => ({
-				contents: await readFile(
-					fileURLToPath(resolve(path, import.meta.url)),
-					{ encoding: "utf-8" },
-				),
-				loader: "js",
+				path: fileURLToPath(resolve(
+					path.slice(`${name}:`.length),
+					import.meta.url,
+				)),
 			}))
 
 			for (const [ext, loader] of Object.entries(loaders)) {
