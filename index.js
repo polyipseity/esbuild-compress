@@ -33,7 +33,6 @@ export default function esbuildCompress(options = {}) {
 			build.onResolve({
 				filter: new RegExp(`^${escapeRegExp(name)}:`, "u"),
 			}, ({ path }) => ({
-				namespace: name,
 				path: fileURLToPath(resolve(
 					path.slice(`${name}:`.length),
 					import.meta.url,
