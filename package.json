@@ -4,7 +4,6 @@
     "url": "https://github.com/polyipseity/esbuild-compress/issues"
   },
   "dependencies": {
-    "esbuild": "^0.17.19",
     "lodash-es": "^4.17.21",
     "lz-string": "^1.5.0",
     "p-lazy": "^4.0.0"
@@ -34,6 +33,9 @@
   "license": "MIT",
   "main": "index.js",
   "name": "esbuild-compress",
+  "peerDependencies": {
+    "esbuild": "^0.17.19"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/polyipseity/esbuild-compress.git"
