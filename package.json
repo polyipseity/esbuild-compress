@@ -13,6 +13,9 @@
   "devDependencies": {
     "@types/node": "^20.3.3"
   },
+  "files": [
+    "index.js"
+  ],
   "funding": [
     {
       "type": "Buy Me a Coffee",
