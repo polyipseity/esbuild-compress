@@ -45,8 +45,7 @@
     "url": "git+https://github.com/polyipseity/esbuild-compress.git"
   },
   "scripts": {
-    "postversion": "node build/version-post.mjs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postversion": "node build/version-post.mjs"
   },
   "type": "module",
   "version": "1.2.1"
