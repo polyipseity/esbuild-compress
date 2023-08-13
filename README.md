@@ -2,7 +2,7 @@
 
 [esbuild]: https://esbuild.github.io
 
-Compression plugin for [esbuild].
+Plugin for [esbuild] that compresses embedded data, which will be decompressed at runtime, to reduce bundle size.
 
 ## Usage
 
@@ -21,9 +21,9 @@ await build({
 	plugins: [
 		esbuildCompress({
 			// see plugin options
-			lazy: true
-		})
-	]
+			lazy: true,
+		}),
+	],
 })
 ```
 - Usage:
