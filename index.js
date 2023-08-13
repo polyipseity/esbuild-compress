@@ -8,7 +8,7 @@ const { compressToBase64 } = lzString
 
 /**
  * @typedef {object} Options
- * @property {boolean=} lazy whether decompression is lazy
+ * @property {boolean=} lazy whether decompression is lazy; not applicable to `compressed-json`
  */
 
 /**
