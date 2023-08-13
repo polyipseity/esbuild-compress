@@ -6,7 +6,7 @@ settings:
 
 dependencies:
   esbuild:
-    specifier: ^0.19.1
+    specifier: '>=0.18.0'
     version: 0.19.1
   import-meta-resolve:
     specifier: ^3.0.0
