@@ -12,7 +12,7 @@
   "description": "Compression plugin for esbuild.",
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
-    "@types/node": "^20.3.3"
+    "@types/node": "^20.4.10"
   },
   "files": [
     "index.js"
@@ -39,7 +39,7 @@
   "main": "index.js",
   "name": "esbuild-compress",
   "peerDependencies": {
-    "esbuild": "^0.18.11"
+    "esbuild": "^0.19.1"
   },
   "repository": {
     "type": "git",
