@@ -1,5 +1,11 @@
 # esbuild-compress
 
+## 1.3.1
+
+### Patch Changes
+
+- 41acda8: Change peer dependency `esbuild` version.
+
 ## 1.3.0
 
 ### Minor Changes
