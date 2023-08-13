@@ -59,8 +59,9 @@ export default decompress(${jsString(compressToBase64(data))})
 					})
 				} else if (loader === "compressed-json") {
 					build.onLoad({ filter }, async ({ path }) => {
-						const data = await readFile(path, { encoding: "utf-8" })
-						JSON.parse(data)
+						const data = JSON.stringify(JSON.parse(
+							await readFile(path, { encoding: "utf-8" }),
+						))
 						return {
 							contents: `
 import { decompressFromBase64 as decompress } from "${name}:lz-string"
