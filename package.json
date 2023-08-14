@@ -39,7 +39,7 @@
   "main": "index.js",
   "name": "esbuild-compress",
   "peerDependencies": {
-    "esbuild": ">=0.18.0"
+    "esbuild": ">=0.17.0"
   },
   "repository": {
     "type": "git",
