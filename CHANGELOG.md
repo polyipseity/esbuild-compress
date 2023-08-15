@@ -1,5 +1,19 @@
 # esbuild-compress
 
+## 2.0.0
+
+### Major Changes
+
+- f233907: Change `Options`.
+
+### Minor Changes
+
+- acc3578: Add `onEnd` option.
+
+### Patch Changes
+
+- 62f607c: Downgrade esbuild version.
+
 ## 1.3.1
 
 ### Patch Changes
