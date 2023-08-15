@@ -104,6 +104,6 @@ function jsString(string) {
  * @returns code with a lazy default export
  */
 function makeDefaultLazy(namespace, code) {
-	return `import{from}from"${namespace}:p-lazy"
-${code.replace("export default", "export default from(()=>")})`
+	return `import PL from"${namespace}:p-lazy"
+${code.replace("export default", "export default PL.from(()=>(")}))`
 }
