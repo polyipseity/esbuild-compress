@@ -14,14 +14,20 @@ import myBuildOptions from "./my-build-options.mjs"
 
 await build({
 	...myBuildOptions,
-	loader: {
-		".json": "compressed-json",
-		".txt": "compressed-text",
-	},
 	plugins: [
 		esbuildCompress({
 			// see plugin options
-			lazy: true,
+			compressors: [
+				{
+					filter: /.json$/u,
+					loader: "json",
+				},
+				{
+					filter: /.txt$/u,
+					lazy: true,
+					loader: "text",
+				},
+			],
 		}),
 	],
 })
