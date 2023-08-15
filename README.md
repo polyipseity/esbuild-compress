@@ -19,11 +19,11 @@ await build({
 			// see plugin options
 			compressors: [
 				{
-					filter: /.json$/u,
+					filter: /\.json$/u,
 					loader: "json",
 				},
 				{
-					filter: /.txt$/u,
+					filter: /\.txt$/u,
 					lazy: true,
 					loader: "text",
 				},
