@@ -1,4 +1,5 @@
 import { escapeRegExp } from "lodash-es"
+import { extname } from "node:path"
 import { fileURLToPath } from "node:url"
 import lzString from "lz-string"
 import { readFile } from "node:fs/promises"
@@ -17,6 +18,7 @@ const { compressToBase64 } = lzString
  * @property {string=} namespace namespace filter
  * @property {"json" | "text"} loader compression mode
  * @property {boolean=} lazy whether decompression is lazy
+ * @property {boolean=} onEnd whether to compress on `onEnd`
  */
 
 /**
@@ -28,8 +30,7 @@ const { compressToBase64 } = lzString
  * @returns {import("esbuild").Plugin} an esbuild plugin
  */
 export default function esbuildCompress(options = {}) {
-	const
-		name = "compress",
+	const name = "compress",
 		{ compressors } = options
 	return {
 		name,
@@ -42,14 +43,18 @@ export default function esbuildCompress(options = {}) {
 					import.meta.url,
 				)),
 			}))
-			for (const { filter, namespace, loader, lazy } of compressors ?? []) {
+			for (const {
+				filter,
+				namespace,
+				loader,
+				lazy,
+				onEnd,
+			} of compressors ?? []) {
 				let callback
 				switch (loader) {
 					case "json":
-						callback = async ({ path }) => {
-							const data = JSON.stringify(JSON.parse(
-								await readFile(path, { encoding: "utf-8" }),
-							))
+						callback = data => {
+							data = JSON.stringify(JSON.parse(data))
 							return {
 								contents:
 									`import{decompressFromBase64 as dc}from"${name}:lz-string"
@@ -59,28 +64,39 @@ export default JSON.parse(dc(${jsString(compressToBase64(data))}))`,
 						}
 						break
 					case "text":
-						callback = async ({ path }) => {
-							const data = await readFile(path, { encoding: "utf-8" })
-							return {
-								contents:
-									`import{decompressFromBase64 as dc}from"${name}:lz-string"
+						callback = data => ({
+							contents:
+								`import{decompressFromBase64 as dc}from"${name}:lz-string"
 export default dc(${jsString(compressToBase64(data))})`,
-								loader: "js",
-							}
-						}
+							loader: "js",
+						})
 						break
 					default:
 						throw new Error(loader)
 				}
 				if (lazy) {
 					const callback2 = callback
-					callback = async (...args) => {
-						const ret = await callback2(...args)
+					callback = (...args) => {
+						const ret = callback2(...args)
 						if (lazy) { ret.contents = makeDefaultLazy(name, ret.contents) }
 						return ret
 					}
 				}
-				build.onLoad({ filter, namespace }, callback)
+				if (onEnd) {
+					build.onEnd(({ outputFiles }) => {
+						for (const file of (outputFiles ?? [])
+							.filter(({ path }) => filter.test(path))) {
+							const { contents, loader } = callback(file.text)
+							file.contents = new TextEncoder().encode(contents)
+							if (extname(file.path) !== `.${loader ?? "js"}`) {
+								file.path += `.${loader ?? "js"}`
+							}
+						}
+					})
+				} else {
+					build.onLoad({ filter, namespace }, async ({ path }) =>
+						callback(await readFile(path, { encoding: "utf-8" })))
+				}
 			}
 		},
 	}
