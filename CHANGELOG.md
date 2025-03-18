@@ -1,5 +1,11 @@
 # esbuild-compress
 
+## 2.0.1
+
+### Patch Changes
+
+- 08b4791: Update dependencies
+
 ## 2.0.0
 
 ### Major Changes
