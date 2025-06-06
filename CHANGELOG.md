@@ -1,5 +1,11 @@
 # esbuild-compress
 
+## 2.0.2
+
+### Patch Changes
+
+- 5719d84: Fix "not a valid Go regular expression".
+
 ## 2.0.1
 
 ### Patch Changes
