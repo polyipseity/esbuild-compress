@@ -36,7 +36,7 @@ export default function esbuildCompress(options = {}) {
 		name,
 		setup(build) {
 			build.onResolve({
-				filter: new RegExp(`^${escapeRegExp(name)}:`, "u"),
+				filter: new RegExp(`^${escapeRegExp(name)}:`), // https://github.com/evanw/esbuild/issues/4128
 			}, ({ path }) => ({
 				path: fileURLToPath(resolve(
 					path.slice(`${name}:`.length),
