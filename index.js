@@ -73,9 +73,7 @@ export default dc(${jsString(compressToBase64(data))})`,
           const callback2 = callback;
           callback = (...args) => {
             const ret = callback2(...args);
-            if (lazy) {
-              ret.contents = makeDefaultLazy(name, ret.contents);
-            }
+            ret.contents = makeDefaultLazy(name, ret.contents);
             return ret;
           };
         }
@@ -84,10 +82,16 @@ export default dc(${jsString(compressToBase64(data))})`,
             for (const file of (outputFiles ?? []).filter(({ path }) =>
               filter.test(path),
             )) {
-              const { contents, loader } = callback(file.text);
+              const { contents } = callback(file.text);
               file.contents = new globalThis.TextEncoder().encode(contents);
-              if (extname(file.path) !== `.${loader ?? "js"}`) {
-                file.path += `.${loader ?? "js"}`;
+              // We explicitly append '.js' here. Currently every callback returns
+              // `loader: "js"`, so checking for '.js' is sufficient and avoids
+              // a more complex expression. If in the future other `loader`
+              // values (e.g. 'css') are supported, replace this check with
+              // `if (extname(file.path) !== `.${loader ?? "js"}`) {` to preserve
+              // the original intention and append the correct extension.
+              if (extname(file.path) !== ".js") {
+                file.path += ".js";
               }
             }
           });
