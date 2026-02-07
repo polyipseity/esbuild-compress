@@ -1,5 +1,24 @@
-<!-- markdownlint-disable-file MD024 -->
-# esbuild-compress
+# esbuild-compress <!-- markdownlint-disable-file MD024 -->
+
+## 2.1.0
+
+### Minor Changes
+
+- c2d1104: Simplify internal logic in `index.js`: always ensure callback
+  `contents` are made lazy by default and append '.js' to file paths
+  explicitly when required. This prepares the codebase for future
+  loader variations and clarifies intent.
+
+### Patch Changes
+
+- 0e0b498: Add tests covering text and JSON compression behavior, lazy
+  export wrapping, onEnd handling, and resolver behavior. This
+  improves coverage and documents expected plugin behavior.
+- ca92761: Apply semicolons and consistent formatting to `index.js`.
+
+  Add trailing newlines to `.changeset` and `.markdownlint.json`.
+
+  Minor cleanup: use `globalThis.TextEncoder` and rewrap lines.
 
 ## 2.0.2
 
