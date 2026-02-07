@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-file MD024 -->
 # esbuild-compress
 
 ## 2.0.2

@@ -1,0 +1,48 @@
+# CI Workflow: Build & Test
+#
+# This workflow runs build and test jobs using the pnpm package manager.
+# It uses the `ubuntu-slim` runner to reduce GitHub Actions billing costs while
+# maintaining compatibility with common Node.js workflows.
+#
+# Rationale: `ubuntu-slim` is chosen for its smaller image size, which speeds up
+# job startup and reduces CI minutes billed. This is especially important for
+# open source projects and small utilities.
+#
+# Jobs are named for clarity in the Actions UI. Each step is named for
+# traceability and easy debugging.
+
+name: "CI: Build & Test"
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build & Test"
+    runs-on: ubuntu-slim
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "*"
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "*"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm run test
+
+      - name: Build project
+        run: pnpm run build

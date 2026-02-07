@@ -1,0 +1,7 @@
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    include: ["tests/**/*.spec.{ts,js,mjs}", "tests/**/*.test.{ts,js,mjs}"],
+  },
+});

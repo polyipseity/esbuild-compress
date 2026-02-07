@@ -7,32 +7,35 @@ Plugin for [esbuild] that compresses embedded data, which will be decompressed a
 ## Usage
 
 - Configuration:
+
 ```JavaScript
 import { build } from "esbuild"
 import esbuildCompress from "esbuild-compress"
 import myBuildOptions from "./my-build-options.mjs"
 
 await build({
-	...myBuildOptions,
-	plugins: [
-		esbuildCompress({
-			// see plugin options
-			compressors: [
-				{
-					filter: /\.json$/u,
-					loader: "json",
-				},
-				{
-					filter: /\.txt$/u,
-					lazy: true,
-					loader: "text",
-				},
-			],
-		}),
-	],
+ ...myBuildOptions,
+ plugins: [
+  esbuildCompress({
+   // see plugin options
+   compressors: [
+    {
+     filter: /\.json$/u,
+     loader: "json",
+    },
+    {
+     filter: /\.txt$/u,
+     lazy: true,
+     loader: "text",
+    },
+   ],
+  }),
+ ],
 })
 ```
+
 - Usage:
+
 ```JavaScript
 import json from "./example.json"
 import text0 from "./example.txt"
