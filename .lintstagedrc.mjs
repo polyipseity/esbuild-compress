@@ -31,7 +31,7 @@ const PRETTIER_GLOB_KEY = (() => {
 })();
 
 export default {
-  [MD_GLOB_KEY]: ["markdownlint-cli2 --fix"],
+  [MD_GLOB_KEY]: ["markdownlint-cli2 --fix --no-globs"],
   [ESLINT_GLOB_KEY]: ["eslint --fix", "prettier --write"],
   [PRETTIER_GLOB_KEY]: ["prettier --write"],
 };
