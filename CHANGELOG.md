@@ -16,7 +16,7 @@
   improves coverage and documents expected plugin behavior.
 - ca92761: Apply semicolons and consistent formatting to `index.js`.
 
-  Add trailing newlines to `.changeset` and `.markdownlint.json`.
+  Add trailing newlines to `.changeset` and `.markdownlint.jsonc`."
 
   Minor cleanup: use `globalThis.TextEncoder` and rewrap lines.
 

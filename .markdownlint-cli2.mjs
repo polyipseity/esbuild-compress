@@ -1,5 +1,3 @@
-import config from "./.markdownlint.json" with { type: "json" };
-
 export const FILE_GLOBS = [
   "**/*.md",
   "**/*.mdoc",
@@ -12,7 +10,6 @@ export const FILE_GLOBS = [
 ];
 
 export default {
-  config,
   globs: FILE_GLOBS,
   gitignore: true,
 };

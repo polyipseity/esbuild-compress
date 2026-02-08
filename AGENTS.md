@@ -55,7 +55,7 @@ This guide documents repository conventions, developer workflows, and instructio
 
 - **ESLint** (`eslint.config.mjs`) — project-level lint rules; run via `pnpm run check:eslint`.
 - **Prettier** (`.prettierrc.mjs`) — formatting; run via `pnpm run format:prettier`.
-- **Markdown linting** via `markdownlint-cli2` (config in `.markdownlint.json`).
+- **Markdown linting** via `markdownlint-cli2` (config in `.markdownlint.jsonc`).
 - **Husky hooks**:
   - `.husky/pre-commit` runs `pnpm dlx --no-install lint-staged` (ensures staged files are linted/fixed).
   - `.husky/pre-push` runs `pnpm test` to block pushes with failing tests.
