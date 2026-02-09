@@ -6,95 +6,103 @@ This guide documents repository conventions, developer workflows, and instructio
 
 ## 1. Architecture Overview 🏗️
 
-- **Entry point:** `index.js` — exports the plugin API used by consumers.
-- **Build & helper scripts:** `build/` contains scripts used for packaging and release workflows (for example, `build/version-post.mjs`).
-- **Tests:** Live under `tests/` and mirror source layout where practical.
-- **Package manager & lockfile:** `pnpm` is the preferred package manager; use `pnpm-lock.yaml`.
+- **Entry point:** `index.js` — exports the plugin API (default export) used by consumers.
+- **Core concept:** The plugin compresses source files (JSON or text) into base64 payloads that are decompressed at runtime using `lz-string`.
+- **Compressor shape:** A compressor is an object:
+  - `filter: RegExp` — file path matcher
+  - `namespace?: string` — optional namespace used for `onLoad`
+  - `loader: "json" | "text"` — compression mode
+  - `lazy?: boolean` — wrap default export with `p-lazy` for deferred decompression
+  - `onEnd?: boolean` — if true, compression happens during `onEnd` for build output files
+- **Key implementation notes:**
+  - `json` loader normalizes JSON via `JSON.stringify(JSON.parse(data))` before compression.
+  - `compress:` import namespace is resolved via `import-meta-resolve` in `onResolve` (e.g. `compress:lz-string`).
+  - `onLoad` handlers return `{ contents, loader: 'js' }` containing an import of `decompressFromBase64` and a `dc(<payload>)` call.
+  - `onEnd` mutates `outputFiles` entries and appends `.js` when the existing extension is not `.js` (see `extname` check in `index.js`).
+  - `jsString` carefully escapes backticks, backslashes, and `$` for safe embedding in template literals.
+  - `makeDefaultLazy` wraps a default export using `p-lazy` (see `import PL from "compress:p-lazy"`).
+- **Dependencies & environment:** ESM package (`type: module`); uses `lz-string`, `p-lazy`, `import-meta-resolve`, and `lodash-es`.
 
 ---
 
 ## 2. Developer Workflows 🚀
 
-- **Install:** `pnpm install` (preferred). Avoid running installs without explicit instruction.
-- **Prepare:** `pnpm run prepare` installs Husky hooks (if not already installed by the package manager).
-- **Build:** `pnpm run build` (runs checks and build-related steps).
+- **Install:** `pnpm install` (preferred). Avoid running installs without explicit instruction from the repo owner or maintainer.
+- **Prepare:** `pnpm run prepare` installs Husky hooks (`.husky/*`).
+- **Build:** `pnpm run build` runs checks and a no-op message (the package ships `index.js` directly).
 - **Test:** `pnpm test` runs the full test suite with coverage (`vitest run --coverage`). For interactive runs: `pnpm run test:watch`.
-- **Format & lint:** `pnpm run format` / `pnpm run check` (see Scripts below).
+- **Format & lint:** `pnpm run format` / `pnpm run check`.
 
 ---
 
 ## 3. Scripts (quick reference) 📋
 
-- `build` — intentionally a no-op in this repository. The package ships `index.js` directly and is importable without a build; the script prints a short message and runs checks only.
-- `check` — runs `check:eslint`, `check:md`, and `check:prettier`.
+- `build` — runs checks then prints a message; no transpilation step.
+- `check` — `check:eslint`, `check:md`, and `check:prettier`.
 - `check:eslint` — `eslint --cache --max-warnings=0`.
 - `check:md` — `markdownlint-cli2`.
-- `check:prettier` — `prettier --cache --check "**/*.{js,mjs,cjs,ts,tsx,json,md,css,scss,html,yml,yaml}"`.
-- `format` — `format:eslint`, `format:md`, `format:prettier`.
-- `prepare` — `husky install` (installs git hooks).
+- `check:prettier` — `prettier --cache --check "**/*.{astro,cjs,css,csv,gql,graphql,hbs,html,js,jsx,json,json5,jsonc,jsonl,less,mjs,pcss,sass,scss,svelte,styl,ts,tsx,vue,xml,yaml,yml}"`.
+- `format` — runs fixers and formatters.
+- `prepare` — `husky`.
 - `test` — `pnpm run test:vitest` (alias); `test:vitest`: `vitest run --coverage`.
-- `test:watch` — run interactive vitest watcher.
-- `postversion` — project-specific version lifecycle hook (if present).
 
-> Tip: When running scripts in hooks or CI, prefer invoking `pnpm run <script>` to guarantee pnpm's behavior.
+> Tip: Tests and CI assume `pnpm` is available; do not change package manager without updating `AGENTS.md` and CI configs.
 
 ---
 
-## 4. Testing Guidance ✅
+## 4. Testing & Development Patterns ✅
 
-- **Test runner:** Vitest. Config lives in `vitest.config.mts`.
-- **Conventions:**
-  - Unit tests: `*.spec.js` (BDD-style) — keep small and hermetic.
-  - Integration tests: `*.test.js` — for longer-running or integration-level checks.
-  - Place tests under `tests/` mirroring the `src/` layout when applicable.
-- **Run locally:** `pnpm test` for coverage or `pnpm run test:watch` for interactive development.
+- **Test runner:** Vitest. Config: `vitest.config.mts`.
+- **Fixtures:** Add small fixtures under `tests/fixtures` (e.g., `sample.json`, `special.txt`).
+- **Stubbing build hooks:** Tests frequently construct minimal `build` stubs that capture handlers:
+  - `onResolve: (opts, handler) => (onResolveHandler = handler)`
+  - `onLoad: (opts, handler) => (onLoadHandler = handler)`
+  - `onEnd: (handler) => (onEndHandler = handler)`
+  Example assertions:
+    - For `onLoad`, call `await onLoadHandler({ path: fixture })` and assert `result.loader === 'js'` and that `result.contents` contains ``dc(`<base64>`)``.
+    - For `onEnd`, call `await onEndHandler({ outputFiles })` and assert `file.path` was appended with `.js` when needed and `file.contents` decodes to the original text.
+- **Test types:** Unit tests use `*.spec.js` for isolated behavior and `*.test.js` for broader integration scenarios.
+- **Edge cases to cover when changing compression logic:** special character handling (see `special.txt`), JSON normalization, lazy exports, namespace filtering, and `onEnd` path extension behavior.
 
 ---
 
 ## 5. Linting, Formatting & Pre-commit Hooks ✨
 
-- **ESLint** (`eslint.config.mjs`) — project-level lint rules; run via `pnpm run check:eslint`.
-- **Prettier** (`.prettierrc.mjs`) — formatting; run via `pnpm run format:prettier`.
-- **Markdown linting** via `markdownlint-cli2` (config in `.markdownlint.jsonc`).
-- **Husky hooks**:
-  - `.husky/pre-commit` runs `pnpm dlx --no-install lint-staged` (ensures staged files are linted/fixed).
-  - `.husky/pre-push` runs `pnpm test` to block pushes with failing tests.
-  - `.husky/commit-msg` runs commit linting via `pnpm dlx --no-install commitlint`.
-- **lint-staged** runs formatters/linters on staged files using the globs from `eslint.config.mjs` and `.markdownlint-cli2.mjs`.
+(unchanged — see above)
 
 ---
 
 ## 6. CI & GitHub Actions 🔁
 
-- CI workflow: `.github/workflows/ci.yml` runs the test and build jobs using `pnpm` on `ubuntu-slim` (smaller runner for cost savings).
-- Commit message linting workflow: `.github/workflows/commitlint.yml` runs on `ubuntu-latest` due to Docker-based action requirements.
-- Dependabot: `.github/dependabot.yml` is configured to update workflow dependencies and package manifests — groups are named to reflect `pnpm` focus.
+(unchanged — CI uses `pnpm`, vitest, and runs commitlint on push)
 
 ---
 
 ## 7. Versioning & Releases 📦
 
-- We use `changesets` for release/version management. See `@changesets/cli` in `devDependencies`.
-- Lifecycle hooks (for example `postversion`) call repository-specific scripts in `build/`.
+(unchanged — uses `changesets`)
 
 ---
 
 ## 8. PR Checklist for Agents & Contributors ✅
 
-1. Add or update tests for behavior changes; follow `*.spec.js` / `*.test.js` conventions.
+1. Add or update targeted tests (see `tests/` and examples above).
 2. Run `pnpm run format` and `pnpm run check` locally before pushing.
-3. Ensure CI passes on your branch (CI uses `pnpm`).
-4. Commit messages must follow Conventional Commits; `commitlint` will enforce header/body rules.
-5. If you changed tooling, update `AGENTS.md` and any relevant instruction files.
+3. Keep changes small and reviewable; update tests and `AGENTS.md` when changing conventions.
+4. Use Conventional Commits (see `.github/instructions/commit-message.instructions.md`).
+5. If you changed tooling, update `AGENTS.md` and corresponding `.github/instructions/*`.
 
 ---
 
 ## 9. Agent Instructions (for AI contributors) 🤖
 
+- **Primary goal:** Make minimal, well-tested changes. Prefer small PRs that change one behavior at a time.
 - **Commit policy:** Use Conventional Commits for all changes and ensure messages pass `commitlint`.
-- **Automation:** Do not run `pnpm install` or make global system changes without explicit user permission.
-- **Edits:** When changing infra or conventions, update `AGENTS.md` and the corresponding `.github/instructions/*` files.
-- **No localization work:** Ignore localization-related templates and instructions — this repository does not use localization.
+  - **Readability target:** Contributors and agents should **aim for a 72-character line wrap** as a human-friendly buffer; tooling (commitlint/CI) may accept up to 100 characters when necessary.
+- **Automation & safety:** Do not run global installs or change system settings without explicit permission. If a change requires installing or upgrading dependencies, outline the steps in the PR and ask maintainers for approval.
+- **When adding behavior:** Add tests that follow existing patterns, add fixtures as needed, and include an explanation in the PR body referencing the relevant tests.
+- **Common patterns to reuse:** `onResolve` specifier resolution, `onLoad` returns with `loader: 'js'` and `contents` that import `decompressFromBase64`, `onEnd` mutates `outputFiles`.
+- **If unsure, ask:** Provide a concise question in the PR or as a comment; include code snippets and a proposed test so maintainers can quickly evaluate.
 
 ---
 

@@ -5,7 +5,7 @@ This project enforces Conventional Commits for all commits. Your commit message 
 ```text
 type(scope): short summary
 
-Optional body (wrap at 100 chars, hard wrap required)
+Optional body (wrap at 72 chars, hard wrap required)
 
 Optional footer (BREAKING CHANGE, Refs, etc)
 ```
@@ -40,9 +40,10 @@ Refs: dependabot config improvement
 ## Linting
 
 - All commit messages are checked by `commitlint` and `husky`.
-- **Header must be ≤ 100 characters.**
-- **Body lines must be hard-wrapped at 100 characters or less.**
-- All agents and contributors must comply; see `AGENTS.md` for enforcement policy.
+- **Tooling acceptance:** commitlint and related tools may accept up to **100 characters** for headers and body lines in practice.
+- **Human target:** contributors and agents should **aim for ≤ 72 characters per line** as a buffer to improve readability and reduce rewrap churn.
+- All agents and contributors must comply; see `AGENTS.md` for enforcement policy and rationale.
+- Agents using the automated commit helper (`.github/prompts/commit-staged.prompt.md`) should attempt the 72-char target when composing messages; if commitlint rejects a message, the helper will retry and may rely on the tooling-allowed 100-char width to find an acceptable form.
 - Example (compliant):
 
   ```text
@@ -55,7 +56,7 @@ Refs: dependabot config improvement
   Refs: lint config modernization
   ```
 
-- See `.commitlintrc.js` for rules.
+- See `.commitlintrc.js` for rules (if present) or `@commitlint/config-conventional` defaults.
 - See `AGENTS.md` for agent compliance requirements.
 
 ## References
