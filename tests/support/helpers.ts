@@ -16,6 +16,7 @@ import type {
   OnLoadOptions,
   OnLoadArgs,
   OnLoadResult,
+  OnStartResult,
   BuildOptions,
   BuildResult,
   BuildContext,
@@ -43,11 +44,19 @@ export function tick(): Promise<void> {
  * Create a minimal, strongly-typed PluginBuild stub for tests.
  * Tests override the specific hook implementations they need.
  */
-export function createPluginBuildStub(): PluginBuild {
+export function createPluginBuildStub(): PluginBuild & {
+  triggerOnStart: () => Promise<Array<OnStartResult | null | void>>;
+} {
+  const onStartHandlers: Array<
+    () => OnStartResult | null | void | Promise<OnStartResult | null | void>
+  > = [];
+
   const stub: PluginBuild = {
     initialOptions: {},
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onStart: (_handler) => {},
+    onStart: (handler) => {
+      // store handlers (do not execute on registration — matches esbuild semantics)
+      onStartHandlers.push(handler);
+    },
     onResolve: (
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       _opts: OnResolveOptions,
@@ -164,30 +173,34 @@ export function createPluginBuildStub(): PluginBuild {
         };
         return res;
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       async formatMessages(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _messages: PartialMessage[],
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _options: FormatMessagesOptions,
       ) {
         return [];
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       formatMessagesSync(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _messages: PartialMessage[],
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _options: FormatMessagesOptions,
       ) {
         return [];
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       async analyzeMetafile(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _metafile: Metafile | string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _options?: AnalyzeMetafileOptions,
       ) {
         return "";
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       analyzeMetafileSync(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _metafile: Metafile | string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _options?: AnalyzeMetafileOptions,
       ) {
         return "";
@@ -198,5 +211,14 @@ export function createPluginBuildStub(): PluginBuild {
     },
   };
 
-  return stub;
+  const extended = Object.assign(stub, {
+    async triggerOnStart() {
+      const results = await Promise.all(
+        onStartHandlers.map((h) => Promise.resolve(h())),
+      );
+      return results;
+    },
+  });
+
+  return extended;
 }
