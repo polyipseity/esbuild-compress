@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import lzString from "lz-string";
-import esbuildCompress from "../src/index.js";
+import esbuildCompress from "../../src/index.js";
 
 const { decompressFromBase64 } = lzString;
 

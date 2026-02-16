@@ -1,7 +1,7 @@
 import { suite, test, expect } from "vitest";
 import fs from "node:fs";
 import lzString from "lz-string";
-import esbuildCompress from "../src/index.js";
+import esbuildCompress from "../../src/index.js";
 
 const { decompressFromBase64, compressToBase64 } = lzString;
 
