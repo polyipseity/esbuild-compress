@@ -55,17 +55,11 @@
   "license": "MIT",
   "main": "src/index.js",
   "name": "esbuild-compress",
-  "overrides": {
-    "tmp": "^0.2.5"
-  },
+  "overrides": {},
   "peerDependencies": {
     "esbuild": ">=0.17.0"
   },
-  "pnpm": {
-    "overrides": {
-      "tmp": "^0.2.5"
-    }
-  },
+  "pnpm": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/polyipseity/esbuild-compress.git"
