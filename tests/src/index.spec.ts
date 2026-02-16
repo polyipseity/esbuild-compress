@@ -1,10 +1,15 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
-import lzString from "lz-string";
+import { decompressFromBase64 } from "lz-string";
 import esbuildCompress from "../../src/index.js";
+import { createPluginBuildStub } from "../support/helpers";
+import type { OnLoadArgs, OnLoadResult } from "esbuild";
 
-const { decompressFromBase64 } = lzString;
+type OnLoadHandler = (
+  args: OnLoadArgs,
+) => OnLoadResult | null | undefined | Promise<OnLoadResult | null | undefined>;
+type OnLoadOptions = { filter: RegExp; namespace?: string };
 
 describe("src/index.js", () => {
   it("throws for unknown loader", () => {
@@ -12,12 +17,14 @@ describe("src/index.js", () => {
       compressors: [
         {
           filter: /./,
+          // @ts-expect-error - intentionally invalid loader to test error handling
           loader: "bad-loader",
         },
       ],
     });
     // Minimal build stub to satisfy onResolve registration
-    const build = { onResolve: () => {} };
+    const build = createPluginBuildStub();
+    build.onResolve = () => {};
     expect(() => plugin.setup(build)).toThrow("bad-loader");
   });
 
@@ -37,24 +44,31 @@ describe("src/index.js", () => {
     });
 
     // let onLoadOpts;
-    let onLoadHandler;
-    const build = {
-      onResolve: () => {},
-      onLoad: (opts, handler) => {
-        // onLoadOpts = opts;
-        onLoadHandler = handler;
-      },
+    let onLoadHandler!: OnLoadHandler;
+    const build = createPluginBuildStub();
+    build.onResolve = () => {};
+    build.onLoad = (opts, handler) => {
+      onLoadHandler = handler;
     };
 
     plugin.setup(build);
     expect(onLoadHandler).toBeTypeOf("function");
-    const result = await onLoadHandler({ path: fixture });
-
+    const result = await onLoadHandler({
+      path: fixture,
+      namespace: "",
+      suffix: "",
+      pluginData: undefined,
+      with: {},
+    });
     expect(result).toBeTruthy();
+    if (!result) throw new Error("onLoad returned undefined");
     expect(result.loader).toBe("js");
+    if (typeof result.contents !== "string")
+      throw new Error("expected string contents");
     // extract base64 payload from dc(`...`)
     const m = result.contents.match(/dc\(`([^`]*)`\)/);
     expect(m).toBeTruthy();
+    if (!m) throw new Error("payload not found");
     const base64 = m[1];
     expect(decompressFromBase64(base64)).toBe(original);
   });
@@ -74,16 +88,24 @@ describe("src/index.js", () => {
       ],
     });
 
-    let onLoadHandler;
-    const build = {
-      onResolve: () => {},
-      onLoad: (opts, handler) => {
-        onLoadHandler = handler;
-      },
+    let onLoadHandler!: OnLoadHandler;
+    const build = createPluginBuildStub();
+    build.onResolve = () => {};
+    build.onLoad = (opts, handler) => {
+      onLoadHandler = handler;
     };
 
     plugin.setup(build);
-    const result = await onLoadHandler({ path: fixture });
+    const result = await onLoadHandler({
+      path: fixture,
+      namespace: "",
+      suffix: "",
+      pluginData: undefined,
+      with: {},
+    });
+    if (!result) throw new Error("onLoad returned undefined");
+    if (typeof result.contents !== "string")
+      throw new Error("expected string contents");
     expect(result.contents).toContain('import PL from"compress:p-lazy"');
     expect(result.contents).toContain("PL.from(()=>(");
     expect(result.loader).toBe("js");
@@ -104,16 +126,25 @@ describe("src/index.js", () => {
       ],
     });
 
-    let onLoadHandler;
-    const build = {
-      onResolve: () => {},
-      onLoad: (opts, handler) => (onLoadHandler = handler),
-    };
+    let onLoadHandler!: OnLoadHandler;
+    const build = createPluginBuildStub();
+    build.onResolve = () => {};
+    build.onLoad = (opts, handler) => (onLoadHandler = handler);
 
     plugin.setup(build);
-    const result = await onLoadHandler({ path: fixture });
+    const result = await onLoadHandler({
+      path: fixture,
+      namespace: "",
+      suffix: "",
+      pluginData: undefined,
+      with: {},
+    });
+    if (!result) throw new Error("onLoad returned undefined");
+    if (typeof result.contents !== "string")
+      throw new Error("expected string contents");
     const m = result.contents.match(/dc\(`([^`]*)`\)/);
     expect(m).toBeTruthy();
+    if (!m) throw new Error("payload not found");
     const base64 = m[1];
     // The plugin JSON.stringify(JSON.parse(data)) makes spacing consistent
     expect(JSON.parse(decompressFromBase64(base64))).toEqual(
@@ -132,14 +163,14 @@ describe("src/index.js", () => {
       ],
     });
 
-    let onLoadOpts;
-    const build = {
-      onResolve: () => {},
-      onLoad: (opts) => (onLoadOpts = opts),
-    };
+    let onLoadOpts: OnLoadOptions | undefined;
+    const build = createPluginBuildStub();
+    build.onResolve = () => {};
+    build.onLoad = (opts) => (onLoadOpts = opts);
 
     plugin.setup(build);
     expect(onLoadOpts).toBeDefined();
+    if (!onLoadOpts) throw new Error("onLoadOpts missing");
     expect(onLoadOpts.namespace).toBe("custom-ns");
     expect(onLoadOpts.filter).toBeInstanceOf(RegExp);
   });
