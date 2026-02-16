@@ -1,11 +1,11 @@
 import { suite, test, expect } from "vitest";
 import fs from "node:fs";
 import lzString from "lz-string";
-import esbuildCompress from "../index.js";
+import esbuildCompress from "../src/index.js";
 
 const { decompressFromBase64, compressToBase64 } = lzString;
 
-suite("index.js", () => {
+suite("src/index.js", () => {
   test("onResolve resolves compress: specifiers to file paths", async () => {
     const plugin = esbuildCompress();
 

@@ -1,12 +1,12 @@
 # AGENTS.md — AI Agent & Contributor Guide 🔧
 
-This guide documents repository conventions, developer workflows, and instructions for AI agents and contributors working in the `esbuild-compress` codebase. This project is a small JavaScript package (entry: `index.js`) providing an esbuild compression plugin. **Localization is not used in this repository — do not add localization files.**
+This guide documents repository conventions, developer workflows, and instructions for AI agents and contributors working in the `esbuild-compress` codebase. This project is a small JavaScript package (entry: `src/index.js`) providing an esbuild compression plugin. **Localization is not used in this repository — do not add localization files.**
 
 ---
 
 ## 1. Architecture Overview 🏗️
 
-- **Entry point:** `index.js` — exports the plugin API (default export) used by consumers.
+- **Entry point:** `src/index.js` — exports the plugin API (default export) used by consumers.
 - **Core concept:** The plugin compresses source files (JSON or text) into base64 payloads that are decompressed at runtime using `lz-string`.
 - **Compressor shape:** A compressor is an object:
   - `filter: RegExp` — file path matcher
@@ -18,7 +18,7 @@ This guide documents repository conventions, developer workflows, and instructio
   - `json` loader normalizes JSON via `JSON.stringify(JSON.parse(data))` before compression.
   - `compress:` import namespace is resolved via `import-meta-resolve` in `onResolve` (e.g. `compress:lz-string`).
   - `onLoad` handlers return `{ contents, loader: 'js' }` containing an import of `decompressFromBase64` and a `dc(<payload>)` call.
-  - `onEnd` mutates `outputFiles` entries and appends `.js` when the existing extension is not `.js` (see `extname` check in `index.js`).
+  - `onEnd` mutates `outputFiles` entries and appends `.js` when the existing extension is not `.js` (see `extname` check in `src/index.js`).
   - `jsString` carefully escapes backticks, backslashes, and `$` for safe embedding in template literals.
   - `makeDefaultLazy` wraps a default export using `p-lazy` (see `import PL from "compress:p-lazy"`).
 - **Dependencies & environment:** ESM package (`type: module`); uses `lz-string`, `p-lazy`, `import-meta-resolve`, and `lodash-es`.
@@ -29,7 +29,7 @@ This guide documents repository conventions, developer workflows, and instructio
 
 - **Install:** `pnpm install` (preferred). Avoid running installs without explicit instruction from the repo owner or maintainer.
 - **Prepare:** `pnpm run prepare` installs Husky hooks (`.husky/*`).
-- **Build:** `pnpm run build` runs checks and a no-op message (the package ships `index.js` directly).
+- **Build:** `pnpm run build` runs checks and a no-op message (the package ships `src/index.js` directly).
 - **Test:** `pnpm test` runs the full test suite with coverage (`vitest run --coverage`). For interactive runs: `pnpm run test:watch`.
 - **Format & lint:** `pnpm run format` / `pnpm run check`.
 

@@ -31,7 +31,7 @@
     "vitest": "^4.0.18"
   },
   "files": [
-    "index.js"
+    "src/index.js"
   ],
   "funding": [
     {
@@ -52,7 +52,7 @@
     "plugin"
   ],
   "license": "MIT",
-  "main": "index.js",
+  "main": "src/index.js",
   "name": "esbuild-compress",
   "overrides": {
     "tmp": "^0.2.5"
@@ -71,7 +71,7 @@
   },
   "scripts": {
     "build": "pnpm run check && pnpm run build:force",
-    "build:force": "node -e \"console.log('No build step; package is ready to import (index.js)')\"",
+    "build:force": "node -e \"console.log('No build step; package is ready to import (src/index.js)')\"",
     "check": "pnpm run check:eslint && pnpm run check:md && pnpm run check:prettier",
     "check:eslint": "eslint --cache --max-warnings=0",
     "check:md": "markdownlint-cli2",

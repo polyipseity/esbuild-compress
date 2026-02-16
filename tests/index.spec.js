@@ -2,11 +2,11 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import lzString from "lz-string";
-import esbuildCompress from "../index.js";
+import esbuildCompress from "../src/index.js";
 
 const { decompressFromBase64 } = lzString;
 
-describe("index.js", () => {
+describe("src/index.js", () => {
   it("throws for unknown loader", () => {
     const plugin = esbuildCompress({
       compressors: [
