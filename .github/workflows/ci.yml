@@ -1,12 +1,6 @@
 # CI Workflow: Build & Test
 #
 # This workflow runs build and test jobs using the pnpm package manager.
-# It uses the `ubuntu-slim` runner to reduce GitHub Actions billing costs while
-# maintaining compatibility with common Node.js workflows.
-#
-# Rationale: `ubuntu-slim` is chosen for its smaller image size, which speeds up
-# job startup and reduces CI minutes billed. This is especially important for
-# open source projects and small utilities.
 #
 # Jobs are named for clarity in the Actions UI. Each step is named for
 # traceability and easy debugging.
@@ -38,7 +32,7 @@ permissions:
 jobs:
   build:
     name: "Build & Test"
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
