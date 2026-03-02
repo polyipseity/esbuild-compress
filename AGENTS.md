@@ -27,11 +27,11 @@ This guide documents repository conventions, developer workflows, and instructio
 
 ## 2. Developer Workflows 🚀
 
-- **Install:** `pnpm install` (preferred). Avoid running installs without explicit instruction from the repo owner or maintainer.
-- **Prepare:** `pnpm run prepare` installs Husky hooks (`.husky/*`).
-- **Build:** `pnpm run build` runs checks and a no-op message (the package ships `src/index.js` directly).
-- **Test:** `pnpm test` runs the full test suite with coverage (`vitest run --coverage`). For interactive runs: `pnpm run test:watch`.
-- **Format & lint:** `pnpm run format` / `pnpm run check`.
+- **Install:** `bun install` (preferred). Avoid running installs without explicit instruction from the repo owner or maintainer.
+- **Prepare:** `bun run prepare` installs Husky hooks (`.husky/*`).
+- **Build:** `bun run build` runs checks and a no-op message (the package ships `src/index.js` directly).
+- **Test:** `bun run test` runs the full test suite with coverage (`vitest run --coverage`). For interactive runs: `bun run test:watch`.
+- **Format & lint:** `bun run format` / `bun run check`.
 
 ---
 
@@ -44,9 +44,9 @@ This guide documents repository conventions, developer workflows, and instructio
 - `check:prettier` — `prettier --cache --check "**/*.{astro,cjs,css,csv,gql,graphql,hbs,html,js,jsx,json,json5,jsonc,jsonl,less,mjs,pcss,sass,scss,svelte,styl,ts,tsx,vue,xml,yaml,yml}"`.
 - `format` — runs fixers and formatters.
 - `prepare` — `husky`.
-- `test` — `pnpm run test:vitest` (alias); `test:vitest`: `vitest run --coverage`.
+- `test` — `bun run test:vitest` (alias); `test:vitest`: `vitest run --coverage`.
 
-> Tip: Tests and CI assume `pnpm` is available; do not change package manager without updating `AGENTS.md` and CI configs.
+> Tip: Tests and CI assume `bun` is available; do not change package manager without updating `AGENTS.md` and CI configs.
 
 ---
 
@@ -74,7 +74,7 @@ This guide documents repository conventions, developer workflows, and instructio
 
 ## 6. CI & GitHub Actions 🔁
 
-(unchanged — CI uses `pnpm`, vitest, and runs commitlint on push)
+(unchanged — CI uses `bun`, vitest, and runs commitlint on push)
 
 ---
 
@@ -87,7 +87,7 @@ This guide documents repository conventions, developer workflows, and instructio
 ## 8. PR Checklist for Agents & Contributors ✅
 
 1. Add or update targeted tests (see `tests/` and examples above).
-2. Run `pnpm run format` and `pnpm run check` locally before pushing.
+2. Run `bun run format` and `bun run check` locally before pushing.
 3. Keep changes small and reviewable; update tests and `AGENTS.md` when changing conventions.
 4. Use Conventional Commits (see `.github/instructions/commit-message.instructions.md`).
 5. If you changed tooling, update `AGENTS.md` and corresponding `.github/instructions/*`.

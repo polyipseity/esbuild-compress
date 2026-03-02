@@ -30,7 +30,7 @@ await onEndHandler({ outputFiles });
 
 Practical rules for AI agents:
 
-- Use `pnpm` scripts for checks (`pnpm run check`, `pnpm test`). Do not run `pnpm install` or change global state without permission.
+- Use `bun` scripts for checks (`bun run check`, `bun run test`). Do not run `bun install` or change global state without permission.
 - Follow `Conventional Commits`; see `.github/instructions/commit-message.instructions.md` for examples.
 - When changing behavior, add tests which demonstrate the new behavior and any relevant edge cases (special chars, JSON normalization, lazy exports, `onEnd` path logic).
 - Update `AGENTS.md` and `.github/instructions/*` when you change project conventions.
