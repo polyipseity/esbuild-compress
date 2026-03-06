@@ -89,8 +89,8 @@ This guide documents repository conventions, developer workflows, and instructio
 1. Add or update targeted tests (see `tests/` and examples above).
 2. Run `bun run format` and `bun run check` locally before pushing.
 3. Keep changes small and reviewable; update tests and `AGENTS.md` when changing conventions.
-4. Use Conventional Commits (see `.github/instructions/commit-message.instructions.md`).
-5. If you changed tooling, update `AGENTS.md` and corresponding `.github/instructions/*`.
+4. Use Conventional Commits (see `.agents/instructions/commit-message.instructions.md`).
+5. If you changed tooling, update `AGENTS.md` and corresponding `.agents/instructions/*`.
 
 ---
 

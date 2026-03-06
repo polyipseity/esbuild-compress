@@ -31,9 +31,9 @@ await onEndHandler({ outputFiles });
 Practical rules for AI agents:
 
 - Use `bun` scripts for checks (`bun run check`, `bun run test`). Do not run `bun install` or change global state without permission.
-- Follow `Conventional Commits`; see `.github/instructions/commit-message.instructions.md` for examples.
+- Follow `Conventional Commits`; see `.agents/instructions/commit-message.instructions.md` for examples.
 - When changing behavior, add tests which demonstrate the new behavior and any relevant edge cases (special chars, JSON normalization, lazy exports, `onEnd` path logic).
-- Update `AGENTS.md` and `.github/instructions/*` when you change project conventions.
+- Update `AGENTS.md` and `.agents/instructions/*` when you change project conventions.
 - If a code change requires dependency changes or CI updates, open a draft PR and request human review before running installs or publishing.
 
 If anything in these instructions is unclear, add a short question in your PR so a maintainer can clarify. Keep your PR descriptions precise and cite the tests that validate your change.

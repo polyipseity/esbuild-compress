@@ -43,7 +43,7 @@ Refs: dependabot config improvement
 - **Tooling acceptance:** commitlint and related tools may accept up to **100 characters** for headers and body lines in practice.
 - **Human target:** contributors and agents should **aim for ≤ 72 characters per line** as a buffer to improve readability and reduce rewrap churn.
 - All agents and contributors must comply; see `AGENTS.md` for enforcement policy and rationale.
-- Agents using the automated commit helper (`.github/prompts/commit-staged.prompt.md`) should attempt the 72-char target when composing messages; if commitlint rejects a message, the helper will retry and may rely on the tooling-allowed 100-char width to find an acceptable form.
+- Agents using the automated commit helper (`.agents/prompts/commit-staged.prompt.md`) should attempt the 72-char target when composing messages; if commitlint rejects a message, the helper will retry and may rely on the tooling-allowed 100-char width to find an acceptable form.
 - Example (compliant):
 
   ```text
