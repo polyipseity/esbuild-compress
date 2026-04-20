@@ -16,6 +16,10 @@ updates:
       bun:
         patterns:
           - "*"
+      bun-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
 
   # GitHub Actions (workflow dependencies)
   - package-ecosystem: "github-actions"
@@ -30,6 +34,10 @@ updates:
       github-actions:
         patterns:
           - "*"
+      github-actions-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
 
   # Git submodules (gitmodules)
   - package-ecosystem: "gitsubmodule"
@@ -42,5 +50,9 @@ updates:
       include: "scope"
     groups:
       gitsubmodule:
+        patterns:
+          - "*"
+      gitsubmodule-security:
+        applies-to: "security-updates"
         patterns:
           - "*"
