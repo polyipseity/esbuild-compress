@@ -28,7 +28,7 @@ This guide documents repository conventions, developer workflows, and instructio
 ## 2. Developer Workflows 🚀
 
 - **Install:** `bun install` (preferred). Avoid running installs without explicit instruction from the repo owner or maintainer.
-- **Prepare:** `bun run prepare` installs Husky hooks (`.husky/*`).
+- **Prepare:** `bun run prepare` installs Prek hooks (`prek.toml`).
 - **Build:** `bun run build` runs checks and a no-op message (the package ships `src/index.js` directly).
 - **Test:** `bun run test` runs the full test suite with coverage (`vitest run --coverage`). For interactive runs: `bun run test:watch`.
 - **Format & lint:** `bun run format` / `bun run check`.
@@ -43,7 +43,7 @@ This guide documents repository conventions, developer workflows, and instructio
 - `check:md` — `markdownlint-cli2`.
 - `check:prettier` — `prettier --cache --check "**/*.{astro,cjs,css,csv,gql,graphql,hbs,html,js,jsx,json,json5,jsonc,jsonl,less,mjs,pcss,sass,scss,svelte,styl,ts,tsx,vue,xml,yaml,yml}"`.
 - `format` — runs fixers and formatters.
-- `prepare` — `husky`.
+- `prepare` — `prek install`.
 - `test` — `bun run test:vitest` (alias); `test:vitest`: `vitest run --coverage`.
 
 > Tip: Tests and CI assume `bun` is available; do not change package manager without updating `AGENTS.md` and CI configs.
@@ -98,7 +98,7 @@ This guide documents repository conventions, developer workflows, and instructio
 
 - **Primary goal:** Make minimal, well-tested changes. Prefer small PRs that change one behavior at a time.
 - **Commit policy:** Use Conventional Commits for all changes and ensure messages pass `commitlint`.
-  - **Readability target:** Contributors and agents should **aim for a 72-character line wrap** as a human-friendly buffer; tooling (commitlint/CI) may accept up to 100 characters when necessary.
+  - **Readability target:** Contributors and agents should **aim for a 72-character line wrap** as a human-friendly buffer; tooling (commitlint/Prek) may accept up to 100 characters when necessary.
 - **Automation & safety:** Do not run global installs or change system settings without explicit permission. If a change requires installing or upgrading dependencies, outline the steps in the PR and ask maintainers for approval.
 - **When adding behavior:** Add tests that follow existing patterns, add fixtures as needed, and include an explanation in the PR body referencing the relevant tests.
 - **Common patterns to reuse:** `onResolve` specifier resolution, `onLoad` returns with `loader: 'js'` and `contents` that import `decompressFromBase64`, `onEnd` mutates `outputFiles`.
